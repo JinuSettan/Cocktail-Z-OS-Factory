@@ -1,22 +1,27 @@
 import os
 import google.generativeai as genai
+from pathlib import Path
 
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-model = genai.GenerativeModel('gemini-1.5-flash')
+genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+model = genai.GenerativeModel('gemini-1.5-pro')
 
-def create_smart_os(os_name, requirements):
-    os.makedirs(os_name, exist_ok=True)
+def build_os_files(os_name, requirements):
+    base_path = Path(f"Rock_Projects/{os_name}")
+    base_path.mkdir(parents=True, exist_ok=True)
     
-    # ഫയലുകളുടെ പട്ടിക
-    files = ["interface.py", "kernel.py", "main.py", "requirements.txt"]
+    # OS components to generate
+    files = {
+        "main.py": f"print('Welcome to {os_name}')",
+        "kernel.py": "def init(): return 'Kernel Loaded'",
+        "interface.py": "import streamlit as st\nst.write('UI Ready')",
+        "install.sh": "echo 'Installing system dependencies...'"
+    }
     
-    for filename in files:
-        # Gemini-യോട് പറയുന്നു: ഈ ഫയലിന് വേണ്ട കോഡ് എഴുതിത്തരാൻ
-        prompt = f"Write the python code for {filename} for an OS named {os_name} that has these requirements: {requirements}. Return ONLY the code."
+    for filename, default_code in files.items():
+        prompt = f"Write professional code for {filename} for an OS named {os_name}. Purpose: {requirements}. Use best coding practices. Return ONLY code."
         response = model.generate_content(prompt)
         
-        # ജനറേറ്റ് ചെയ്ത കോഡ് ഫയലിലേക്ക് സേവ് ചെയ്യുന്നു
-        with open(f"{os_name}/{filename}", "w") as f:
+        with open(base_path / filename, "w") as f:
             f.write(response.text.replace("```python", "").replace("```", ""))
             
-    return f"🚀 {os_name} successfully built by Rock Factory using Gemini AI!"
+    return f"✅ {os_name} successfully built!"
