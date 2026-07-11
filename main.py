@@ -1,21 +1,13 @@
 import streamlit as st
 import kernel
-import interface
 
-# UI Render
-interface.render_desktop()
+st.title("🪨 Rock Factory - AI OS Builder")
 
-# Session State
-if 'history' not in st.session_state:
-    st.session_state.history = []
+os_name = st.text_input("Enter OS Name:")
+requirements = st.text_area("Describe your OS (Features, Theme, etc.):")
 
-# Chat/Prompt Interface
-user_input = st.chat_input("Tell Rock what to build (OS/Software)...")
-
-if user_input:
-    # Rock-ന്റെ മാജിക്
-    response = kernel.process_command(user_input, st.session_state.history)
-    st.session_state.history.append((user_input, response))
-
-# Show Logs
-interface.render_terminal(st.session_state.history)
+if st.button("Build OS"):
+    with st.spinner('Rock is building your OS...'):
+        status = kernel.create_smart_os(os_name, requirements)
+        st.success(status)
+        st.write(f"Check the folder '{os_name}' to see your new OS!")
