@@ -1,29 +1,20 @@
-
 import streamlit as st
 
 def render_desktop():
-    # OS Header
+    st.set_page_config(page_title="Rock OS Factory", layout="wide")
     st.markdown("""
         <style>
-        .stApp { background-color: #0e1117; color: white; }
-        .terminal { font-family: 'Courier New', monospace; background: black; padding: 20px; border-radius: 10px; }
+        .stApp { background-color: #050505; color: #00ff00; }
         </style>
     """, unsafe_allow_html=True)
     
-    st.header("💻 Cocktail-Z-OS Desktop")
-    
-    # Status Bar
-    col1, col2, col3 = st.columns(3)
-    col1.metric("CPU Load", "4%")
-    col2.metric("RAM", "128MB")
-    col3.metric("Status", "Online")
-    
-    st.divider()
+    st.title("🪨 Rock Factory - AI OS Architect")
+    st.info("System Ready. Define your dream OS below.")
 
 def render_terminal(history):
-    st.subheader("Terminal Access")
-    terminal_container = st.container(height=300)
-    with terminal_container:
-        for cmd, res in history:
-            st.write(f"**> {cmd}**")
-            st.write(res)
+    st.subheader("Architect Logs")
+    for user_msg, rock_res in history:
+        with st.chat_message("user"):
+            st.write(user_msg)
+        with st.chat_message("assistant"):
+            st.write(rock_res)
